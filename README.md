@@ -65,6 +65,24 @@ $("#graph").graphite({
 });
 ```
 
+## Controls
+
+You can add controls to the generated graph useful for changing the from and 
+util times.
+```html
+<img id="graph">
+```
+
+```js
+$("#graph").graphite({
+    from: "-24hours",
+    target: [
+        "server.web1.load",
+    ],
+    addcontrols: true
+});
+```
+
 ## $(img).graphite(options)
 
 You should probably specify a target. All other settings are optional. All
