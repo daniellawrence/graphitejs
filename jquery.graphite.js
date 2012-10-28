@@ -113,7 +113,7 @@ controls = {
 	key = $(this).attr('name');
 	value = $(this).attr('value');
 	img = $(this).parent().find('img');
-	var options = { addcontrols: true };
+	var options = { addcontrols: false };
 	options[key] =  value;
 	$.fn.graphite.update( img, options );
     });
