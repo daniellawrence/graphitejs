@@ -1,6 +1,26 @@
 // graphite.js
 
 (function ($) {
+
+controls = {
+	from:
+	[
+		'-2hours',
+		'-4hours',
+		'-12hours',
+		'-1days',
+		'-3days'
+	],
+	until:
+	[
+		'now',
+		'-2hours',
+		'-4hours',
+		'-12hours',
+		'-1days',
+		'-3days'
+	]
+}
     $.fn.graphite = function (options) {
         if (options === "update") {
             $.fn.graphite.update(this, arguments[1]);
@@ -34,13 +54,35 @@
                 });
             } else if (value !== null && key !== "url") {
                 src += "&" + key + "=" + value;
-            }
+ 	     }
         });
-
+        
         src = src.replace(/\?&/, "?");
         $img.attr("src", src);
         $img.attr("height", options.height);
         $img.attr("width", options.width);
+
+	// If the option has not been set to include he controls, then dont add
+	// the controls.
+
+	if( options["addcontrols"] !== true ) {
+		return;
+	}
+
+	// Add extra controls, assume we have an outer div
+	div = $img.parent();
+
+	// Loop over the above json to generate the graph_control's
+	$.each(controls, function( w,x){
+		control = $("<select name='" + w + "' class='graph_control'>");
+		control.append("<option disabled=disabed selected='true'>" + w + "</option>");
+		control.append("<option disabled=disabed>---------</option>");
+		$.each(x, function(y,z){
+			control.append("<option value='" + z + "'>" + z + "</option>");
+		});
+		div.append( control );
+	});
+	
     };
 
     $.fn.graphite.update = function($img, options) {
@@ -63,5 +105,17 @@
         url: "/render/",
         width: "940"
     };
+
+
+    // live function that will catch any interactions with the graph_control
+    // items.
+    $(".graph_control").live("click", function(data) {
+	key = $(this).attr('name');
+	value = $(this).attr('value');
+	img = $(this).parent().find('img');
+	var options = { addcontrols: true };
+	options[key] =  value;
+	$.fn.graphite.update( img, options );
+    });
 
 }(jQuery));
